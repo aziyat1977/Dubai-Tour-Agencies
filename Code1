@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dubai to the Stars 🚀 Space Travel Booking</title>
+    <style>
+        :root {
+            --space-blue: #0B1A30;
+            --star-gold: #FFD700;
+            --nebula-purple: #6A1B9A;
+        }
+
+        body {
+            background: var(--space-blue);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .active-tab {
+            display: block;
+        }
+
+        .trip-card {
+            background: linear-gradient(45deg, var(--nebula-purple), var(--space-blue));
+            border: 1px solid var(--star-gold);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+
+        .booking-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        #countdown {
+            font-size: 2rem;
+            color: var(--star-gold);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Dubai to the Stars</h1>
+            <p>Your Gateway to Orbital Experiences</p>
+        </div>
+
+        <nav class="nav-tabs">
+            <button onclick="showTab('book')">Book Flight</button>
+            <button onclick="showTab('dashboard')">Dashboard</button>
+            <button onclick="showTab('accommodations')">Space Hotels</button>
+        </nav>
+
+        <!-- Booking Section -->
+        <div id="book" class="tab-content active-tab">
+            <div class="booking-form">
+                <div>
+                    <label>Departure Date:</label>
+                    <input type="date" id="launchDate" min="2025-01-01">
+                </div>
+                
+                <div>
+                    <label>Destination:</label>
+                    <select id="destination">
+                        <option value="ISS">International Space Station</option>
+                        <option value="MOON">Lunar Gateway Hotel</option>
+                        <option value="ORBIT">Zero-Gravity Orbit Experience</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Class:</label>
+                    <select id="class">
+                        <option value="economy">Economy Shuttle ($150k)</option>
+                        <option value="luxury">Luxury Cabin ($500k)</option>
+                        <option value="vip">VIP Zero-G Experience ($1M)</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="searchFlights()">Search Flights</button>
+            <div id="flightResults"></div>
+        </div>
+
+        <!-- User Dashboard -->
+        <div id="dashboard" class="tab-content">
+            <h2>Launch Countdown: <span id="countdown"></span></h2>
+            <div id="bookings-list"></div>
+            <div id="ai-tips"></div>
+        </div>
+
+        <!-- Accommodation Recommendations -->
+        <div id="accommodations" class="tab-content">
+            <div class="trip-card">
+                <h3>Orbital Suite Hotel</h3>
+                <p>⭐ 360° Earth Views | Zero-G Spa | 5-Star Dining</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample Space Hotels Data
+        const spaceHotels = [
+            { name: "Lunar Gateway Resort", price: "$200k/night", amenities: ["Low-Gravity Pool", "Moonbase Tours"] },
+            { name: "Orbital Suite Hotel", price: "$500k/night", amenities: ["Earth Observation Deck"] }
+        ];
+
+        // User Bookings Data
+        let bookings = [];
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        function searchFlights() {
+            const flightResults = document.getElementById('flightResults');
+            const template = `
+                <div class="trip-card">
+                    <h3>Flight to ${document.getElementById('destination').value}</h3>
+                    <p>Launch Date: ${document.getElementById('launchDate').value}</p>
+                    <p>Class: ${document.getElementById('class').value}</p>
+                    <button onclick="bookFlight()">Confirm Booking</button>
+                </div>
+            `;
+            flightResults.innerHTML = template;
+        }
+
+        function bookFlight() {
+            const newBooking = {
+                destination: document.getElementById('destination').value,
+                date: document.getElementById('launchDate').value,
+                class: document.getElementById('class').value,
+                bookedAt: new Date()
+            };
+            bookings.push(newBooking);
+            updateDashboard();
+            showTab('dashboard');
+        }
+
+        function updateDashboard() {
+            // Update bookings list
+            document.getElementById('bookings-list').innerHTML = bookings
+                .map(booking => `<div>${booking.destination} - ${booking.date}</div>`)
+                .join('');
+            
+            // Update countdown
+            const countdownElement = document.getElementById('countdown');
+            if(bookings.length > 0) {
+                const launchDate = new Date(bookings[0].date);
+                setInterval(() => {
+                    const now = new Date();
+                    const diff = launchDate - now;
+                    countdownElement.innerHTML = `${Math.floor(diff/(1000*60*60*24))}d ${Math.floor((diff/(1000*60*60))%24)}h`;
+                }, 1000);
+            }
+
+            // Generate AI Tips
+            const tips = [
+                "Pro Tip: Practice zero-gravity exercises before launch!",
+                "Recommended: Try the orbital sushi experience!"
+            ];
+            document.getElementById('ai-tips').innerHTML = 
+                `<div class="trip-card">${tips[Math.floor(Math.random()*tips.length)]}</div>`;
+        }
+    </script>
+</body>
+</html>
